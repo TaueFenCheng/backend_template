@@ -15,10 +15,10 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @Post()
+  @Post('submit')
   @ApiOperation({ summary: 'Post form data' })
-  @ApiResponse({ status: 201, description: 'Form updated successfully' })
-  postHello(@Body() createDto: CreateFormDto): string {
+  @ApiResponse({ status: 201, description: 'Form submitted successfully' })
+  postHello(@Body() createDto: CreateFormDto) {
     return this.appService.updateoForm(createDto);
   }
 }

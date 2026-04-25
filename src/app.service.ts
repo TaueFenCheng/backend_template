@@ -6,7 +6,13 @@ export class AppService {
   getHello(): string {
     return 'Hello World!';
   }
-  updateoForm(createDto: CreateFormDto): string {
-    return `Form updated! Name: ${createDto.name}, Email: ${createDto.email}`;
+
+  updateoForm(createDto: CreateFormDto) {
+    return {
+      name: createDto.name,
+      email: createDto.email,
+      message: createDto.message,
+      submittedAt: new Date().toISOString(),
+    };
   }
 }
