@@ -21,4 +21,11 @@ export class AppService {
     });
     return form;
   }
+
+  async getAllForms(): Promise<FormResponseDto[]> {
+    const forms = await this.prisma.form.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+    return forms;
+  }
 }
