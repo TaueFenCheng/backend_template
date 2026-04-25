@@ -1,0 +1,19 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Form {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(50)
+  email     String   @db.VarChar(100)
+  message   String   @db.VarChar(500)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("forms")
+}

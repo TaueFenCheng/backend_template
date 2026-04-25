@@ -19,6 +19,6 @@ export class AppController {
   @ApiOperation({ summary: 'Post form data' })
   @ApiResponse({ status: 201, description: 'Form submitted successfully' })
   postHello(@Body() createDto: CreateFormDto) {
-    return this.appService.updateoForm(createDto);
+    return this.appService.createUser(createDto);
   }
 }
