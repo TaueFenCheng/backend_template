@@ -2,6 +2,7 @@ import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AppService } from './app.service';
 import { CreateFormDto } from './dto/create-form.dto';
+import { FormResponseDto } from './dto/form-response.dto';
 
 @ApiTags('nestjs_demo')
 @Controller()
@@ -17,8 +18,8 @@ export class AppController {
 
   @Post('submit')
   @ApiOperation({ summary: 'Post form data' })
-  @ApiResponse({ status: 201, description: 'Form submitted successfully' })
-  postHello(@Body() createDto: CreateFormDto) {
+  @ApiResponse({ status: 201, description: 'Form submitted successfully', type: FormResponseDto })
+  postHello(@Body() createDto: CreateFormDto): Promise<FormResponseDto> {
     return this.appService.createUser(createDto);
   }
 }
