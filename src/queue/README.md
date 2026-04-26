@@ -23,6 +23,8 @@
 
 ```
 queue/
+├── dto/
+│   └── queue-job.dto.ts  # 任务数据 DTO
 ├── queue.module.ts      # BullMQ 模块配置
 ├── queue.service.ts     # 任务生产者
 ├── queue.processor.ts   # 任务消费者
@@ -62,9 +64,22 @@ queue/
 export class QueueModule {}
 ```
 
-### 2. QueueService - 任务生产者
+### 2. QueueJobDto - 任务数据定义
 
-添加任务到队列：
+```typescript
+export class QueueJobDto {
+  @ApiProperty({ example: 'John Doe' })
+  name: string;
+
+  @ApiProperty({ example: 'john@example.com' })
+  email: string;
+
+  @ApiProperty({ example: 'Hello World' })
+  message: string;
+}
+```
+
+### 3. QueueService - 任务生产者
 
 ```typescript
 @Injectable()
@@ -79,16 +94,14 @@ export class QueueService {
 }
 ```
 
-### 3. QueueProcessor - 任务消费者
-
-处理队列中的任务：
+### 4. QueueProcessor - 任务消费者
 
 ```typescript
 @Processor('form-queue')
 export class QueueProcessor extends WorkerHost {
   async process(job: Job) {
+    // BullMQ 自动调用此方法！
     console.log(`Processing job ${job.id} with data:`, job.data);
-    // 执行异步任务
     await new Promise((resolve) => setTimeout(resolve, 1000));
     console.log(`Job ${job.id} completed`);
     return { success: true, jobId: job.id };
@@ -96,21 +109,37 @@ export class QueueProcessor extends WorkerHost {
 }
 ```
 
+**重要：`process()` 方法由 BullMQ Worker 自动调用，无需手动调用。**
+
 ## 工作流程
 
 ```
-1. Controller 接收请求
+1. POST /queue请求
    ↓
-2. QueueService.addJob() 添加任务
+2. QueueController.addJob() 接收请求
    ↓
-3. BullMQ 将任务存入 Redis
+3. QueueService.addJob() 添加任务到队列
    ↓
-4. QueueProcessor 自动获取任务
+4. BullMQ 将任务存入 Redis
    ↓
-5. process() 方法处理任务
+5. QueueProcessor Worker 监听队列（自动运行）
    ↓
-6. 任务完成，标记为 completed
+6. process(job) 自动被调用处理任务
+   ↓
+7. 任务完成，标记为 completed
 ```
+
+## process() 方法调用机制
+
+| 组件 | 调用方式 | 说明 |
+|------|----------|------|
+| `QueueService.addJob()` | **手动调用** | Controller/Service 中调用 |
+| `QueueProcessor.process()` | **自动调用** | BullMQ Worker 自动触发 |
+
+**调用时机：**
+- 任务添加到队列后立即触发
+- 任务重试时再次触发
+- Worker 启动后持续监听队列
 
 ## API 使用
 
@@ -121,8 +150,9 @@ POST /queue
 Content-Type: application/json
 
 {
-  "name": "test",
-  "email": "test@example.com"
+  "name": "John Doe",
+  "email": "john@example.com",
+  "message": "Hello World"
 }
 ```
 
@@ -132,9 +162,12 @@ Content-Type: application/json
 {
   "code": 0,
   "data": {
-    "id": "1",
-    "name": "process-form",
-    "data": { "name": "test", "email": "test@example.com" }
+    "jobId": "1",
+    "data": {
+      "name": "John Doe",
+      "email": "john@example.com",
+      "message": "Hello World"
+    }
   },
   "message": "success"
 }
@@ -188,7 +221,7 @@ interface Job {
 
 ## Processor 进阶用法
 
-### 处理多个任务类型
+### 处理多个任务类型（示例）
 
 ```typescript
 @Processor('form-queue')
@@ -199,23 +232,18 @@ export class QueueProcessor extends WorkerHost {
         return this.processForm(job.data);
       case 'send-email':
         return this.sendEmail(job.data);
-      case 'generate-report':
-        return this.generateReport(job.data);
       default:
         throw new Error(`Unknown job type: ${job.name}`);
     }
   }
 
-  private async processForm(data: any) {
-    // 处理表单
+  private async processForm(data: QueueJobDto) {
+    // 处理表单数据
+    console.log(`处理表单: ${data.name}, ${data.email}`);
   }
 
   private async sendEmail(data: any) {
-    // 发送邮件
-  }
-
-  private async generateReport(data: any) {
-    // 生成报告
+    // 发送邮件逻辑
   }
 }
 ```
@@ -245,7 +273,7 @@ export class QueueProcessor extends WorkerHost {
       // 处理任务
       return { success: true };
     } catch (error) {
-      // 记录错误
+      // 记录错误日志
       job.log(`Error: ${error.message}`);
       // 抛出错误，任务会自动重试（如果配置了 attempts）
       throw error;
@@ -298,8 +326,13 @@ connection: {
 
 ## 选择建议
 
-- **使用 BullMQ**：邮件发送、数据处理、报表生成、跨服务通信
-- **使用 EventEmitter**：模块解耦、日志记录、简单通知
+| 场景 | 推荐方案 | 原因 |
+|------|----------|------|
+| 发送邮件 | BullMQ | 重要任务，需要可靠性 |
+| 数据处理 | BullMQ | 可能耗时，需要异步 |
+| 报表生成 | BullMQ | 大任务，需要进度跟踪 |
+| 模块解耦 | EventEmitter | 简单通知，不需要持久化 |
+| 日志记录 | EventEmitter | 快速、轻量 |
 
 ## 常见使用场景
 
@@ -320,6 +353,11 @@ connection: {
 const counts = await queue.getJobCounts();
 console.log(counts);
 // { waiting: 5, active: 2, completed: 100, failed: 3 }
+
+// 查看特定任务
+const job = await queue.getJob('1');
+console.log(job.progress);  // 进度
+console.log(job.state);     // 状态
 ```
 
 ### Bull Board（可视化监控）
@@ -327,7 +365,7 @@ console.log(counts);
 安装依赖：
 
 ```bash
-pnpm add bull-board
+pnpm add @bull-board/express @bull-board/api
 ```
 
 ## NestJS 官方文档
@@ -337,8 +375,9 @@ pnpm add bull-board
 
 ## 相关文件
 
-- [src/queue/queue.module.ts](queue.module.ts) - 模块配置
-- [src/queue/queue.service.ts](queue.service.ts) - 生产者
-- [src/queue/queue.processor.ts](queue.processor.ts) - 消费者
-- [src/queue/queue.controller.ts](queue.controller.ts) - API 控制器
-- [src/config/redis.config.ts](../config/redis.config.ts) - Redis 配置
+- [queue.module.ts](queue.module.ts) - 模块配置
+- [queue.service.ts](queue.service.ts) - 任务生产者
+- [queue.processor.ts](queue.processor.ts) - 任务消费者
+- [queue.controller.ts](queue.controller.ts) - API 控制器
+- [dto/queue-job.dto.ts](dto/queue-job.dto.ts) - 任务 DTO
+- [../config/redis.config.ts](../config/redis.config.ts) - Redis 配置
