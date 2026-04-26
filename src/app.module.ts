@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ScheduleModule } from '@nestjs/schedule';
 import { LoggerModule as PinoLoggerModule } from 'nestjs-pino';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -10,11 +11,13 @@ import { QueueModule } from './queue/queue.module';
 import { ConfigModule } from './config/config.module';
 import { AuthModule } from './auth/auth.module';
 import { EventsModule } from './events/events.module';
+import { ScheduleModule as AppScheduleModule } from './schedule/schedule.module';
 
 @Module({
   imports: [
     ConfigModule,
     EventEmitterModule.forRoot(),
+    ScheduleModule.forRoot(),
     PinoLoggerModule.forRoot({
       pinoHttp: {
         transport: {
@@ -38,6 +41,7 @@ import { EventsModule } from './events/events.module';
     QueueModule,
     AuthModule,
     EventsModule,
+    AppScheduleModule,
   ],
   controllers: [AppController],
   providers: [
