@@ -16,6 +16,7 @@
 - **JWT 认证** - 用户注册、登录、Token 认证
 - **API 限流** - IP 限流保护（100 请求/分钟）
 - **事件系统** - @nestjs/event-emitter 实现模块间解耦通信
+- **定时任务** - @nestjs/schedule 实现 Cron 定时任务
 
 ## 技术栈
 
@@ -28,6 +29,7 @@
 - Swagger/OpenAPI
 - Pino Logger
 - EventEmitter2
+- Schedule (Cron)
 
 ## 项目设置
 
@@ -86,6 +88,9 @@ pnpm start:prod
 | `/auth/register` | POST | 用户注册 | 无 |
 | `/auth/login` | POST | 用户登录 | 无 |
 | `/auth/profile` | GET | 用户信息 | JWT |
+| `/schedule/cron-jobs` | GET | 获取定时任务 | 无 |
+| `/schedule/intervals` | GET | 获取间隔任务 | 无 |
+| `/schedule/cron/:name` | POST | 添加定时任务 | 无 |
 
 ## Swagger 文档
 
@@ -124,6 +129,10 @@ src/
 │   └── user.events.ts # 用户事件定义
 ├── prisma/         # Prisma 服务
 ├── queue/          # BullMQ 消息队列
+├── schedule/       # 定时任务
+│   ├── schedule.service.ts # 定时任务服务
+│   ├── schedule.controller.ts # 任务管理API
+│   └── README.md   # 定时任务文档
 ├── app.module.ts   # 主模块
 ├── app.controller.ts
 ├── app.service.ts
@@ -157,6 +166,9 @@ pnpm add @nestjs/throttler
 
 # 事件系统
 pnpm add @nestjs/event-emitter eventemitter2
+
+# 定时任务
+pnpm add @nestjs/schedule cron
 ```
 
 ## 运行测试
