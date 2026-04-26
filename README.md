@@ -15,6 +15,7 @@
 - **Pino 日志** - 结构化 JSON 日志，开发环境美化输出
 - **JWT 认证** - 用户注册、登录、Token 认证
 - **API 限流** - IP 限流保护（100 请求/分钟）
+- **事件系统** - @nestjs/event-emitter 实现模块间解耦通信
 
 ## 技术栈
 
@@ -26,6 +27,7 @@
 - JWT + Passport
 - Swagger/OpenAPI
 - Pino Logger
+- EventEmitter2
 
 ## 项目设置
 
@@ -117,6 +119,9 @@ src/
 │   ├── filters/    # 异常过滤器
 │   ├── guards/     # 认证守卫
 │   └── interceptors/ # 拦截器
+├── events/         # 事件系统
+│   ├── listeners/  # 事件监听器
+│   └── user.events.ts # 用户事件定义
 ├── prisma/         # Prisma 服务
 ├── queue/          # BullMQ 消息队列
 ├── app.module.ts   # 主模块
@@ -149,6 +154,9 @@ pnpm add @nestjs/jwt @nestjs/passport passport passport-jwt bcrypt
 
 # 限流
 pnpm add @nestjs/throttler
+
+# 事件系统
+pnpm add @nestjs/event-emitter eventemitter2
 ```
 
 ## 运行测试
