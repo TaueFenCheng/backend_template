@@ -17,6 +17,7 @@
 - **API 限流** - IP 限流保护（100 请求/分钟）
 - **事件系统** - @nestjs/event-emitter 实现模块间解耦通信
 - **定时任务** - @nestjs/schedule 实现 Cron 定时任务
+- **健康检查** - @nestjs/terminus 提供 `/health` 与 `/ready` 探针
 
 ## 技术栈
 
@@ -91,6 +92,8 @@ pnpm start:prod
 | `/schedule/cron-jobs` | GET | 获取定时任务 | 无 |
 | `/schedule/intervals` | GET | 获取间隔任务 | 无 |
 | `/schedule/cron/:name` | POST | 添加定时任务 | 无 |
+| `/health` | GET | 存活探针（Liveness） | 无 |
+| `/ready` | GET | 就绪探针（Readiness） | 无 |
 
 ## Swagger 文档
 

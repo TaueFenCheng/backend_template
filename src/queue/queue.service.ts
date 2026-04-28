@@ -10,4 +10,9 @@ export class QueueService {
     const job = await this.queue.add('process-form', data);
     return job;
   }
+
+  async ping(): Promise<string> {
+    const client = await this.queue.client;
+    return client.ping();
+  }
 }

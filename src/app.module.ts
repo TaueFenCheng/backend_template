@@ -12,6 +12,7 @@ import { ConfigModule } from './config/config.module';
 import { AuthModule } from './auth/auth.module';
 import { EventsModule } from './events/events.module';
 import { ScheduleModule as AppScheduleModule } from './schedule/schedule.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { ScheduleModule as AppScheduleModule } from './schedule/schedule.module'
     AuthModule,
     EventsModule,
     AppScheduleModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [
