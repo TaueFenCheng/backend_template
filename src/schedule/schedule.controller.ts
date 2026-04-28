@@ -10,7 +10,7 @@ export class ScheduleController {
   @Get('cron-jobs')
   @ApiOperation({ summary: '获取所有定时任务' })
   @ApiResponse({ status: 200, description: '返回所有定时任务列表' })
-  getAllCronJobs() {
+  getAllCronJobs(): any[] {
     return this.scheduleService.getAllCronJobs();
   }
 
@@ -30,9 +30,16 @@ export class ScheduleController {
 
   @Post('cron/:name')
   @ApiOperation({ summary: '动态添加定时任务' })
-  @ApiQuery({ name: 'expression', description: 'Cron表达式', example: '0 * * * * *' })
+  @ApiQuery({
+    name: 'expression',
+    description: 'Cron表达式',
+    example: '0 * * * * *',
+  })
   @ApiResponse({ status: 201, description: '任务添加成功' })
-  addCronJob(@Param('name') name: string, @Query('expression') expression: string) {
+  addCronJob(
+    @Param('name') name: string,
+    @Query('expression') expression: string,
+  ) {
     this.scheduleService.addCronJob(name, expression);
     return { message: `任务 ${name} 已添加` };
   }

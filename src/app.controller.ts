@@ -18,14 +18,22 @@ export class AppController {
 
   @Get('forms')
   @ApiOperation({ summary: 'Get all forms' })
-  @ApiResponse({ status: 200, description: 'Returns all forms', type: [FormResponseDto] })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns all forms',
+    type: [FormResponseDto],
+  })
   getAllForms(): Promise<FormResponseDto[]> {
     return this.appService.getAllForms();
   }
 
   @Post('submit')
   @ApiOperation({ summary: 'Post form data' })
-  @ApiResponse({ status: 201, description: 'Form submitted successfully', type: FormResponseDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Form submitted successfully',
+    type: FormResponseDto,
+  })
   postHello(@Body() createDto: CreateFormDto): Promise<FormResponseDto> {
     return this.appService.createUser(createDto);
   }

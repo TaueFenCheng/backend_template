@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -6,7 +10,11 @@ import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { USER_EVENTS, UserRegisteredEvent, UserLoginEvent } from '../events/user.events';
+import {
+  USER_EVENTS,
+  UserRegisteredEvent,
+  UserLoginEvent,
+} from '../events/user.events';
 
 @Injectable()
 export class AuthService {
@@ -77,7 +85,10 @@ export class AuthService {
       secret,
       expiresIn: 86400, // 1 day in seconds
     });
-    return { accessToken: token, user: { id: user.id, email: user.email, name: user.name } };
+    return {
+      accessToken: token,
+      user: { id: user.id, email: user.email, name: user.name },
+    };
   }
 
   async validateUser(userId: number) {

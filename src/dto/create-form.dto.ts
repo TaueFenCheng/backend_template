@@ -13,7 +13,10 @@ export class CreateFormDto {
   @IsNotEmpty()
   email: string;
 
-  @ApiProperty({ example: 'Hello, this is a message.', description: '消息内容' })
+  @ApiProperty({
+    example: 'Hello, this is a message.',
+    description: '消息内容',
+  })
   @IsString()
   @IsNotEmpty()
   @Length(10, 500)

@@ -16,7 +16,8 @@ export class PrismaHealthIndicator {
       await this.prisma.$queryRaw`SELECT 1`;
       return indicator.up();
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Prisma health check failed';
+      const message =
+        error instanceof Error ? error.message : 'Prisma health check failed';
       return indicator.down({ message });
     }
   }

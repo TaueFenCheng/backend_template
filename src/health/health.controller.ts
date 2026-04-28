@@ -1,5 +1,9 @@
 import { Controller, Get } from '@nestjs/common';
-import { HealthCheck, HealthCheckService, MemoryHealthIndicator } from '@nestjs/terminus';
+import {
+  HealthCheck,
+  HealthCheckService,
+  MemoryHealthIndicator,
+} from '@nestjs/terminus';
 import { PrismaHealthIndicator } from './indicators/prisma.health';
 import { RedisHealthIndicator } from './indicators/redis.health';
 
@@ -15,7 +19,9 @@ export class HealthController {
   @Get('health')
   @HealthCheck()
   liveness() {
-    return this.health.check([() => this.memory.checkHeap('memory_heap', 300 * 1024 * 1024)]);
+    return this.health.check([
+      () => this.memory.checkHeap('memory_heap', 300 * 1024 * 1024),
+    ]);
   }
 
   @Get('ready')

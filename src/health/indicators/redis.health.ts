@@ -18,9 +18,12 @@ export class RedisHealthIndicator {
         return indicator.up();
       }
 
-      return indicator.down({ message: `Unexpected redis ping response: ${response}` });
+      return indicator.down({
+        message: `Unexpected redis ping response: ${response}`,
+      });
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Redis health check failed';
+      const message =
+        error instanceof Error ? error.message : 'Redis health check failed';
       return indicator.down({ message });
     }
   }

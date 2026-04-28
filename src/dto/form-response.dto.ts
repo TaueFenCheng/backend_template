@@ -10,7 +10,10 @@ export class FormResponseDto {
   @ApiProperty({ example: 'john@example.com', description: '用户邮箱' })
   email: string;
 
-  @ApiProperty({ example: 'Hello, this is a message.', description: '消息内容' })
+  @ApiProperty({
+    example: 'Hello, this is a message.',
+    description: '消息内容',
+  })
   message: string;
 
   @ApiProperty({ example: '2026-04-25T12:00:00.000Z', description: '创建时间' })

@@ -34,7 +34,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       } else {
         errorCode = this.mapHttpStatusToErrorCode(status);
         message = this.mapHttpStatusToErrorType(status);
-        details = exceptionResponse as string;
+        details = exceptionResponse;
       }
     } else {
       status = HttpStatus.INTERNAL_SERVER_ERROR;

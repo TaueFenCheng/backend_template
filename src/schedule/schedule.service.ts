@@ -1,5 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Cron, CronExpression, Interval, Timeout, SchedulerRegistry } from '@nestjs/schedule';
+import {
+  Cron,
+  CronExpression,
+  Interval,
+  Timeout,
+  SchedulerRegistry,
+} from '@nestjs/schedule';
 import { CronJob } from 'cron';
 
 @Injectable()
@@ -77,7 +83,7 @@ export class ScheduleService {
   }
 
   // 获取所有定时任务
-  getAllCronJobs() {
+  getAllCronJobs(): any[] {
     const jobs = this.schedulerRegistry.getCronJobs();
     const result: any[] = [];
 
