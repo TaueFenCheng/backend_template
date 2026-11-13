@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { ResilienceModule } from '@nestjs/resilience';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ScheduleModule } from '@nestjs/schedule';
 import { LoggerModule as PinoLoggerModule } from 'nestjs-pino';
@@ -13,6 +14,7 @@ import { AuthModule } from './auth/auth.module';
 import { EventsModule } from './events/events.module';
 import { ScheduleModule as AppScheduleModule } from './schedule/schedule.module';
 import { HealthModule } from './health/health.module';
+import { AiModule } from './ai/ai.module';
 
 @Module({
   imports: [
@@ -38,12 +40,14 @@ import { HealthModule } from './health/health.module';
         limit: 100,
       },
     ]),
+    ResilienceModule.forRoot(),
     PrismaModule,
     QueueModule,
     AuthModule,
     EventsModule,
     AppScheduleModule,
     HealthModule,
+    AiModule,
   ],
   controllers: [AppController],
   providers: [

@@ -10,4 +10,7 @@ export const configValidationSchema = Joi.object({
   REDIS_PORT: Joi.number().default(6379),
   JWT_SECRET: Joi.string().required(),
   JWT_EXPIRATION: Joi.string().default('7d'),
+  AI_API_KEY: Joi.string().allow('').default(''),
+  AI_BASE_URL: Joi.string().uri().default('https://api.openai.com/v1'),
+  AI_MODEL: Joi.string().default('gpt-4o-mini'),
 });

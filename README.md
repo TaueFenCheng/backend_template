@@ -21,7 +21,7 @@
 
 ## 技术栈
 
-- NestJS 11
+- NestJS 12
 - TypeScript
 - Prisma 6.x
 - PostgreSQL
@@ -46,6 +46,9 @@ REDIS_HOST=localhost
 REDIS_PORT=6379
 JWT_SECRET=your-secret-key
 JWT_EXPIRATION=7d
+AI_API_KEY=your-openai-compatible-api-key
+AI_BASE_URL=https://api.openai.com/v1
+AI_MODEL=gpt-4o-mini
 ```
 
 ### 安装依赖
@@ -53,6 +56,8 @@ JWT_EXPIRATION=7d
 ```bash
 pnpm install
 ```
+
+NestJS 12 运行要求 Node.js 20.19+ 或 22.12+；项目使用 Node.js 22 时请确保至少为 22.12。
 
 ### 数据库设置
 
@@ -89,6 +94,10 @@ pnpm start:prod
 | `/auth/register` | POST | 用户注册 | 无 |
 | `/auth/login` | POST | 用户登录 | 无 |
 | `/auth/profile` | GET | 用户信息 | JWT |
+| `/ai/generate` | POST | AI 文本生成（支持检索个人表单工具） | JWT |
+| `/ai/chat` | POST | 流式 AI 对话（SSE/UI Message Stream） | JWT |
+| `/ai/conversations` | GET | 当前用户会话列表 | JWT |
+| `/ai/conversations/:id` | GET | 会话消息历史 | JWT |
 | `/schedule/cron-jobs` | GET | 获取定时任务 | 无 |
 | `/schedule/intervals` | GET | 获取间隔任务 | 无 |
 | `/schedule/cron/:name` | POST | 添加定时任务 | 无 |
@@ -100,6 +109,16 @@ pnpm start:prod
 启动项目后访问：`http://localhost:3000/docs`
 
 认证端点需要在 Swagger UI 中点击 "Authorize" 按钮，输入 JWT Token。
+
+AI 对话请求示例：
+
+```json
+{
+  "message": "帮我查找我提交过的表单"
+}
+```
+
+首次聊天会创建会话并返回流式内容；继续对话时传入 `conversationId`。AI 可按需调用 `search_my_forms`，该工具只检索当前登录用户提交的表单。应用升级后运行 `pnpm prisma migrate deploy` 应用新增的 AI 会话迁移。
 
 ## 配置系统
 
